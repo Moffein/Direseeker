@@ -9,10 +9,12 @@ using UnityEngine.AddressableAssets;
 namespace DireseekerMod.States
 {
 	public class Flamethrower : BaseState
-	{
-		public override void OnEnter()
+    {
+        private float lastUpdateTime;   //Maximum cope
+        public override void OnEnter()
 		{
 			base.OnEnter();
+			lastUpdateTime = Time.time;
 			this.stopwatch = 0f;
 			this.entryDuration = Flamethrower.baseEntryDuration / this.attackSpeedStat;
 			this.exitDuration = Flamethrower.baseExitDuration / this.attackSpeedStat;
@@ -89,7 +91,9 @@ namespace DireseekerMod.States
 		public override void FixedUpdate()
 		{
 			base.FixedUpdate();
-			this.stopwatch += Time.fixedDeltaTime;
+			float deltaTime = Time.time - lastUpdateTime;
+			lastUpdateTime = Time.time;
+			this.stopwatch += deltaTime;
 			bool flag = this.stopwatch >= this.entryDuration && this.stopwatch < this.entryDuration + this.flamethrowerDuration && !this.hasBegunFlamethrower;
 			if (flag)
 			{
@@ -126,7 +130,7 @@ namespace DireseekerMod.States
 			bool flag6 = this.hasBegunFlamethrower;
 			if (flag6)
 			{
-				this.flamethrowerStopwatch += Time.deltaTime;
+				this.flamethrowerStopwatch += deltaTime;
 				bool flag7 = this.flamethrowerStopwatch > 1f / Flamebreath.tickFrequency;
 				if (flag7)
 				{

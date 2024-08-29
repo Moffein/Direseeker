@@ -8,9 +8,11 @@ namespace DireseekerMod.States
 {
 	public class SpawnState : EntityState
 	{
+		private float lastUpdateTime;	//Maximum cope
 		public override void OnEnter()
 		{
 			base.OnEnter();
+			lastUpdateTime = Time.time;
 			base.GetModelAnimator();
 			Util.PlaySound(EntityStates.LemurianBruiserMonster.SpawnState.spawnSoundString, base.gameObject);
 			//Util.PlaySound("DireseekerSpawn", base.gameObject);
@@ -23,7 +25,10 @@ namespace DireseekerMod.States
 		public override void FixedUpdate()
 		{
 			base.FixedUpdate();
-			this.effectStopwatch -= Time.fixedDeltaTime;
+
+			float deltaTime = Time.time - lastUpdateTime;
+			lastUpdateTime = Time.time;
+			this.effectStopwatch -= deltaTime;
 			bool flag = this.effectStopwatch <= 0f & base.fixedAge < 0.5f * SpawnState.duration;
 			if (flag)
 			{

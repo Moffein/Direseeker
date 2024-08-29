@@ -11,9 +11,12 @@ namespace DireseekerMod.States
 {
 	public class FlamePillar : BaseState
 	{
+		private float lastUpdateTime;
+		private float deltaTime;
 		public override void OnEnter()
 		{
 			base.OnEnter();
+			lastUpdateTime = Time.time;
 			this.stopwatch = 0f;
 			bool flag = base.modelLocator;
 			if (flag)
@@ -101,7 +104,10 @@ namespace DireseekerMod.States
 		public override void FixedUpdate()
 		{
 			base.FixedUpdate();
-			this.stopwatch += Time.fixedDeltaTime;
+
+			deltaTime = Time.time - lastUpdateTime;
+			lastUpdateTime = Time.time;
+			this.stopwatch += deltaTime;
 			switch (this.subState)
 			{
 				case FlamePillar.SubState.Prep:

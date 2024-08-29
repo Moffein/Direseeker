@@ -9,9 +9,13 @@ namespace DireseekerMod.States
 {
 	public class Enrage : BaseState
 	{
+		private float lastUpdateTime;	//Maximum cope
 		public override void OnEnter()
 		{
 			base.OnEnter();
+
+			lastUpdateTime = Time.time;
+
 			this.stopwatch = 0f;
 			this.entryDuration = Enrage.baseEntryDuration / this.attackSpeedStat;
 			this.exitDuration = Enrage.baseExitDuration / this.attackSpeedStat;
@@ -27,7 +31,6 @@ namespace DireseekerMod.States
 			{
 				base.characterBody.AddBuff(RoR2Content.Buffs.ArmorBoost);
 			}
-			//this.roarStartPlayID = Util.PlaySound("DireseekerRoarStart", base.gameObject);
 			base.PlayAnimation("Gesture, Override", "PrepFlamebreath", "PrepFlamebreath.playbackRate", this.entryDuration);
 			Util.PlaySound("Play_magmaWorm_spawn_VO", base.gameObject);
 		}
@@ -50,10 +53,6 @@ namespace DireseekerMod.States
 
 		public override void OnExit()
 		{
-			if (!stoppedSound)
-			{
-				AkSoundEngine.StopPlayingID(this.roarStartPlayID);
-			}
 			base.PlayCrossfade("Gesture, Override", "BufferEmpty", 0.1f);
 			base.OnExit();
 		}
@@ -61,7 +60,11 @@ namespace DireseekerMod.States
 		public override void FixedUpdate()
 		{
 			base.FixedUpdate();
-			this.stopwatch += Time.fixedDeltaTime;
+
+			float deltaTime = Time.time - lastUpdateTime;
+			lastUpdateTime = Time.time;
+
+			this.stopwatch += deltaTime;
 			bool flag = this.stopwatch >= this.entryDuration && !this.hasEnraged;
 			if (flag)
 			{
@@ -116,7 +119,6 @@ namespace DireseekerMod.States
 		private float exitDuration;
 		private bool hasEnraged;
 		private bool heck;
-		private uint roarStartPlayID;
 		private bool stoppedSound = false;
 		private ChildLocator childLocator;
 		private DireseekerController direController;

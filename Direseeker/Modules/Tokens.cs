@@ -21,15 +21,6 @@ namespace DireseekerMod.Modules
         public static void RegisterLanguageTokens()
         {
             On.RoR2.Language.SetFolders += fixme;
-
-            /*
-			LanguageAPI.Add("DIRESEEKER_BOSS_BODY_NAME", "Direseeker");
-			LanguageAPI.Add("DIRESEEKER_BOSS_BODY_SUBTITLE", "Track and Kill");
-			LanguageAPI.Add("DIRESEEKER_BOSS_BODY_LORE", "Direseeker\n\nDireseeker is a giant Elder Lemurian that acts as a boss in the Stage 4 area Magma Barracks. Upon defeating it, the player will unlock the Miner character for future playthroughs. The path leading to Direseeker's location only appears in one of the three variants of the level, and even then Direseeker may or may not spawn with random chance. Completing the teleporter event will also prevent it from spawning.\nNote that in online co-op the boss may spawn for the Host, but not others, although they can still damage it.\nActivating the Artifact of Kin does not prevent it from appearing.\n\nCategories: Enemies | Bosses | Unlisted Enemies\n\nLanguages: Español");
-			LanguageAPI.Add("DIRESEEKER_BOSS_BODY_OUTRO_FLAVOR", "..and so it left, in search of new prey.");
-			LanguageAPI.Add("DIRESEEKER_SPAWN_WARNING", "<style=cWorldEvent>You hear a distant rumbling..</style>");
-			LanguageAPI.Add("DIRESEEKER_SPAWN_BEGIN", "<style=cWorldEvent>The rumbling grows loud.</style>");
-             */
         }
 
         //Credits to Anreol for this code

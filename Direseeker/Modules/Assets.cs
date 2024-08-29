@@ -24,14 +24,6 @@ namespace DireseekerMod.Modules
 				}
 			}
 
-			//Doesn't work. Soundbank needs to be recompiled with latest WWISE?
-			using (Stream manifestResourceStream2 = Assembly.GetExecutingAssembly().GetManifestResourceStream("Direseeker.DireseekerBank.bnk"))
-			{
-				byte[] array = new byte[manifestResourceStream2.Length];
-				manifestResourceStream2.Read(array, 0, array.Length);
-				SoundAPI.SoundBanks.Add(array);
-			}
-
 			Assets.bossPortrait = Assets.mainAssetBundle.LoadAsset<Sprite>("texDireseekerIcon").texture;
 			Assets.charPortrait = Assets.mainAssetBundle.LoadAsset<Sprite>("texDireseekerPlayerIcon").texture;
 			Assets.direseekerEncounter = Assets.mainAssetBundle.LoadAsset<GameObject>("BossEncounter");

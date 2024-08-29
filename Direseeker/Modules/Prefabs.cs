@@ -17,6 +17,9 @@ namespace DireseekerMod.Modules
 		{
 			Prefabs.bodyPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterBodies/LemurianBruiserBody").InstantiateClone("DireseekerBody", true);
 
+			Rigidbody rb = Prefabs.bodyPrefab.GetComponent<Rigidbody>();
+			if (rb) rb.mass = 900;
+
 			//Add DeathReward
 			//This causes all its drops to be replaced by the Perforator. Why?
 			/*GameObject WormPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaWormBody.prefab").WaitForCompletion();

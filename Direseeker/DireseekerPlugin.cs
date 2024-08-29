@@ -7,16 +7,11 @@ using R2API.Utils;
 namespace Direseeker
 {
 	[BepInDependency("com.Moffein.AccurateEnemies", BepInDependency.DependencyFlags.SoftDependency)]
-	[BepInDependency("com.bepis.r2api")]
-	[NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-	[BepInPlugin("com.rob.Direseeker", "Direseeker", "1.4.0")]
-	[R2APISubmoduleDependency(new string[]
-	{
-		"PrefabAPI",
-		"LanguageAPI",
-		"SoundAPI",
-		nameof(R2API.ContentAddition)
-	})]
+    [BepInDependency(R2API.R2API.PluginGUID)]
+    [BepInDependency(R2API.ContentManagement.R2APIContentManager.PluginGUID)]
+    [BepInDependency(R2API.PrefabAPI.PluginGUID)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
+	[BepInPlugin("com.rob.Direseeker", "Direseeker", "1.4.4")]
 	public class DireseekerPlugin : BaseUnityPlugin
 	{
 		public static bool AccurateEnemiesLoaded = false;
@@ -27,14 +22,14 @@ namespace Direseeker
 		{
 			AccurateEnemiesLoaded = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.Moffein.AccurateEnemies");
 			pluginInfo = Info;
-			Assets.PopulateAssets();
+            DireseekerMod.Modules.Assets.PopulateAssets();
 			Tokens.RegisterLanguageTokens();
 			Prefabs.CreatePrefab();
 			States.RegisterStates();
 			Skills.RegisterSkills();
 			Projectiles.CreateProjectiles();
 			SpawnCards.CreateSpawnCards();
-			Assets.UpdateAssets();
+            DireseekerMod.Modules.Assets.UpdateAssets();
 			new Hooks().ApplyHooks();
 		}
 	}

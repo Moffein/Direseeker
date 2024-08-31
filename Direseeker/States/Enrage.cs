@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DireseekerMod.Components;
 using EntityStates;
 using RoR2;
@@ -77,15 +78,20 @@ namespace DireseekerMod.States
 				Transform modelTransform = base.GetModelTransform();
 				bool flag2 = modelTransform;
 				if (flag2)
-				{
-					TemporaryOverlay temporaryOverlay = modelTransform.gameObject.AddComponent<TemporaryOverlay>();
-					temporaryOverlay.duration = 1f;
-					temporaryOverlay.animateShaderAlpha = true;
-					temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-					temporaryOverlay.destroyComponentOnEnd = true;
-					temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
-					temporaryOverlay.AddToCharacerModel(modelTransform.GetComponent<CharacterModel>());
-				}
+                {
+                    CharacterModel cm = modelTransform.gameObject.GetComponent<CharacterModel>();
+					if (cm)
+                    {
+                        if (cm.temporaryOverlays == null) cm.temporaryOverlays = new List<TemporaryOverlayInstance>();
+                        TemporaryOverlayInstance temporaryOverlay = TemporaryOverlayManager.AddOverlay(modelTransform.gameObject);
+                        temporaryOverlay.duration = 1f;
+                        temporaryOverlay.animateShaderAlpha = true;
+                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+                        temporaryOverlay.destroyComponentOnEnd = true;
+                        temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
+                        temporaryOverlay.inspectorCharacterModel = cm;
+                    }
+                }
 				base.PlayAnimation("Gesture, Override", "Flamebreath", "Flamebreath.playbackRate", this.exitDuration);
 			}
 			bool flag3 = this.stopwatch >= this.entryDuration + 0.75f * this.exitDuration && !this.heck;

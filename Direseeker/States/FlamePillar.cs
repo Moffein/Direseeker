@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EntityStates;
 using EntityStates.LemurianBruiserMonster;
@@ -34,14 +35,19 @@ namespace DireseekerMod.States
 					Transform modelTransform = base.GetModelTransform();
 					bool flag4 = modelTransform;
 					if (flag4)
-					{
-						TemporaryOverlay temporaryOverlay = modelTransform.gameObject.AddComponent<TemporaryOverlay>();
-						temporaryOverlay.duration = 3f;
-						temporaryOverlay.animateShaderAlpha = true;
-						temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-						temporaryOverlay.destroyComponentOnEnd = true;
-						temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
-						temporaryOverlay.AddToCharacerModel(modelTransform.GetComponent<CharacterModel>());
+                    {
+                        CharacterModel cm = modelTransform.gameObject.GetComponent<CharacterModel>();
+						if (cm)
+                        {
+                            if (cm.temporaryOverlays == null) cm.temporaryOverlays = new List<TemporaryOverlayInstance>();
+                            TemporaryOverlayInstance temporaryOverlay = TemporaryOverlayManager.AddOverlay(modelTransform.gameObject);
+                            temporaryOverlay.duration = 3f;
+                            temporaryOverlay.animateShaderAlpha = true;
+                            temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+                            temporaryOverlay.destroyComponentOnEnd = true;
+                            temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
+							temporaryOverlay.inspectorCharacterModel = cm;
+                        }
 					}
 					Transform transform = component.FindChild("MuzzleMouth");
 					bool flag5 = transform && ChargeMegaFireball.chargeEffectPrefab;

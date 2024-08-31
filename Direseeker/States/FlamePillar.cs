@@ -40,13 +40,14 @@ namespace DireseekerMod.States
 						if (cm)
                         {
                             if (cm.temporaryOverlays == null) cm.temporaryOverlays = new List<TemporaryOverlayInstance>();
-                            TemporaryOverlayInstance temporaryOverlay = TemporaryOverlayManager.AddOverlay(modelTransform.gameObject);
+                            TemporaryOverlayInstance temporaryOverlay = TemporaryOverlayManager.AddOverlay(cm.gameObject);
                             temporaryOverlay.duration = 3f;
                             temporaryOverlay.animateShaderAlpha = true;
                             temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                             temporaryOverlay.destroyComponentOnEnd = true;
                             temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
 							temporaryOverlay.inspectorCharacterModel = cm;
+							temporaryOverlay.Start();
                         }
 					}
 					Transform transform = component.FindChild("MuzzleMouth");

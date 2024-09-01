@@ -367,4 +367,8 @@
       <HintPath>libs\Zio.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call &quot;$(ProjectDir)postbuild.bat&quot;&#xD;&#xA;" />
+  </Target>
 </Project>

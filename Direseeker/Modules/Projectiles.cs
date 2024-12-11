@@ -24,7 +24,13 @@ namespace DireseekerMod.Modules
 			component2.falloffModel = BlastAttack.FalloffModel.SweetSpot;
 			component2.blastDamageCoefficient = 1f;
 			component2.blastProcCoefficient = 1f;
-			Projectiles.fireballGroundPrefab.GetComponent<ProjectileController>().ghostPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/MagmaOrbProjectile").GetComponent<ProjectileController>().ghostPrefab;
+
+			ProjectileDamage fireballDamage = fireballPrefab.GetComponent<ProjectileDamage>();
+			fireballDamage.damageType.damageSource = DamageSource.Primary;
+			ProjectileDamage fireballGroundDamage = fireballGroundPrefab.GetComponent<ProjectileDamage>();
+            fireballGroundDamage.damageType.damageSource = DamageSource.Primary;
+
+            Projectiles.fireballGroundPrefab.GetComponent<ProjectileController>().ghostPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/MagmaOrbProjectile").GetComponent<ProjectileController>().ghostPrefab;
 			Projectiles.fireballGroundPrefab.GetComponent<ProjectileImpactExplosion>().impactEffect = impactEffect;
 			Projectiles.fireTrailPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/FireTrail").InstantiateClone("DireseekerBossFireTrail", true);
 			Projectiles.fireTrailPrefab.AddComponent<NetworkIdentity>();

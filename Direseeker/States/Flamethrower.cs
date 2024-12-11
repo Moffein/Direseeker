@@ -63,7 +63,7 @@ namespace DireseekerMod.States
 			bool flag = base.isAuthority && this.muzzleTransform;
 			if (flag)
 			{
-				new BulletAttack
+				var b = new BulletAttack
 				{
 					owner = base.gameObject,
 					weapon = base.gameObject,
@@ -83,7 +83,9 @@ namespace DireseekerMod.States
 					maxDistance = Flamebreath.maxDistance,
 					smartCollision = true,
 					damageType = DamageType.PercentIgniteOnHit
-				}.Fire();
+				};
+				b.damageType.damageSource = DamageSource.Secondary;
+				b.Fire();
 			}
 		}
 

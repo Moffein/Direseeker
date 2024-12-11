@@ -206,6 +206,7 @@ namespace DireseekerMod.States
 			component.falloffModel = BlastAttack.FalloffModel.None;
 			component.explosionEffect = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/MagmaOrbProjectile").GetComponent<ProjectileImpactExplosion>().impactEffect;
 			component.maxTimer = FlamePillar.pillarDelay;
+			component.damageType.damageSource = DamageSource.Utility;
 			gameObject.GetComponent<TeamFilter>().teamIndex = TeamComponent.GetObjectTeam(component.attacker);
 		}
 

@@ -4,6 +4,7 @@ using R2API;
 using RoR2;
 using RoR2.Projectile;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
 namespace DireseekerMod.Modules
@@ -12,12 +13,12 @@ namespace DireseekerMod.Modules
 	{
 		public static void CreateProjectiles()
 		{
-			Projectiles.fireballPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/ArchWispCannon").InstantiateClone("DireseekerBossFireball", true);
-			Projectiles.fireballGroundPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/ArchWispGroundCannon").InstantiateClone("DireseekerBossGroundFireball", true);
+			Projectiles.fireballPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Junk/ArchWisp/ArchWispCannon.prefab").WaitForCompletion().InstantiateClone("DireseekerBossFireball", true);
+			Projectiles.fireballGroundPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Junk/ArchWisp/ArchWispGroundCannon.prefab").WaitForCompletion().InstantiateClone("DireseekerBossGroundFireball", true);
 			ProjectileController component = Projectiles.fireballPrefab.GetComponent<ProjectileController>();
-			component.ghostPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/LemurianBigFireball").GetComponent<ProjectileController>().ghostPrefab;
+			component.ghostPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBigFireball.prefab").WaitForCompletion().GetComponent<ProjectileController>().ghostPrefab;
 			component.startSound = "Play_lemurianBruiser_m1_shoot";
-			GameObject impactEffect = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/LemurianBigFireball").GetComponent<ProjectileImpactExplosion>().impactEffect;
+			GameObject impactEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBigFireball.prefab").WaitForCompletion().GetComponent<ProjectileImpactExplosion>().impactEffect;
 			ProjectileImpactExplosion component2 = Projectiles.fireballPrefab.GetComponent<ProjectileImpactExplosion>();
 			component2.childrenProjectilePrefab = Projectiles.fireballGroundPrefab;
 			component2.GetComponent<ProjectileImpactExplosion>().impactEffect = impactEffect;
@@ -30,9 +31,9 @@ namespace DireseekerMod.Modules
 			ProjectileDamage fireballGroundDamage = fireballGroundPrefab.GetComponent<ProjectileDamage>();
             fireballGroundDamage.damageType.damageSource = DamageSource.Primary;
 
-            Projectiles.fireballGroundPrefab.GetComponent<ProjectileController>().ghostPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/MagmaOrbProjectile").GetComponent<ProjectileController>().ghostPrefab;
+            Projectiles.fireballGroundPrefab.GetComponent<ProjectileController>().ghostPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaOrbGhost.prefab").WaitForCompletion().GetComponent<ProjectileController>().ghostPrefab;
 			Projectiles.fireballGroundPrefab.GetComponent<ProjectileImpactExplosion>().impactEffect = impactEffect;
-			Projectiles.fireTrailPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/FireTrail").InstantiateClone("DireseekerBossFireTrail", true);
+			Projectiles.fireTrailPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Common/FireTrail.prefab").WaitForCompletion().InstantiateClone("DireseekerBossFireTrail", true);
 			Projectiles.fireTrailPrefab.AddComponent<NetworkIdentity>();
 			Projectiles.fireballGroundPrefab.GetComponent<ProjectileDamageTrail>().trailPrefab = Projectiles.fireTrailPrefab;
 

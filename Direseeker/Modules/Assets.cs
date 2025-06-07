@@ -7,6 +7,7 @@ using EntityStates;
 using R2API;
 using RoR2;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
 namespace DireseekerMod.Modules
@@ -31,7 +32,7 @@ namespace DireseekerMod.Modules
 			Assets.direseekerEncounter.RegisterNetworkPrefab();    //Apparently this auto adds it to the contentpack?
 
 			Assets.direseekerButton = Assets.mainAssetBundle.LoadAsset<GameObject>("DireseekerButton");
-			Shader shader = LegacyResourcesAPI.Load<Shader>("Shaders/Deferred/hgstandard");
+			Shader shader = Addressables.LoadAssetAsync<Shader>("RoR2/Base/Shaders/HGStandard.shader").WaitForCompletion();
 			Material material = Assets.direseekerButton.GetComponentInChildren<SkinnedMeshRenderer>().material;
 			material.shader = shader;
 			Assets.direseekerButton.AddComponent<DireseekerButtonController>();

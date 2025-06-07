@@ -14,19 +14,20 @@ namespace DireseekerMod.Modules
 	public static class Prefabs
 	{
 		public static void CreatePrefab()
-		{
-			Prefabs.bodyPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterBodies/LemurianBruiserBody").InstantiateClone("DireseekerBody", true);
+        {
+            Prefabs.bodyPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserBody.prefab").WaitForCompletion().InstantiateClone("DireseekerBody", true);
 
-			Rigidbody rb = Prefabs.bodyPrefab.GetComponent<Rigidbody>();
+            Rigidbody rb = Prefabs.bodyPrefab.GetComponent<Rigidbody>();
 			if (rb) rb.mass = 900;
 
-			//Add DeathReward
-			//This causes all its drops to be replaced by the Perforator. Why?
-			/*GameObject WormPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaWormBody.prefab").WaitForCompletion();
+
+            //Add DeathReward
+            //This causes all its drops to be replaced by the Perforator. Why?
+            /*GameObject WormPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaWormBody.prefab").WaitForCompletion();
 			DeathRewards deathReward = Prefabs.bodyPrefab.GetComponent<DeathRewards>();
 			deathReward.bossDropTable = WormPrefab.GetComponent<DeathRewards>().bossDropTable;*/
 
-			UnityEngine.Object.Destroy(Prefabs.bodyPrefab.GetComponent<SetStateOnHurt>());
+            UnityEngine.Object.Destroy(Prefabs.bodyPrefab.GetComponent<SetStateOnHurt>());
 			CharacterBody component = Prefabs.bodyPrefab.GetComponent<CharacterBody>();
 			component.name = "DireseekerBossBody";
 			component.baseNameToken = "DIRESEEKER_BOSS_BODY_NAME";
@@ -75,7 +76,9 @@ namespace DireseekerMod.Modules
 			direseekerController.burstFlame = gameObject4.GetComponent<ParticleSystem>();
 			direseekerController.rageFlame = gameObject3.GetComponent<ParticleSystem>();
 			direseekerController.rageFlame.Stop();
-			Shader shader = LegacyResourcesAPI.Load<Shader>("Shaders/Deferred/hgstandard");
+
+			//This section nullrefs.
+            Shader shader = Addressables.LoadAssetAsync<Shader>("RoR2/Base/Shaders/HGStandard.shader").WaitForCompletion();
 			Material material2 = gameObject.GetComponentInChildren<MeshRenderer>().material;
 			material2.shader = shader;
 			CharacterModel.RendererInfo[] baseRendererInfos = componentInChildren.baseRendererInfos;
@@ -98,7 +101,9 @@ namespace DireseekerMod.Modules
 				}
 			};
 			componentInChildren.baseRendererInfos = baseRendererInfos2;
-			Prefabs.masterPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/LemurianBruiserMaster").InstantiateClone("DireseekerBossMaster", true);
+			//
+
+            Prefabs.masterPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserMaster.prefab").WaitForCompletion().InstantiateClone("DireseekerBossMaster", true);
 			CharacterMaster component2 = Prefabs.masterPrefab.GetComponent<CharacterMaster>();
 			component2.bodyPrefab = Prefabs.bodyPrefab;
 			component2.isBoss = true;

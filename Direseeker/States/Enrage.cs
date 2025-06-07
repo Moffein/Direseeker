@@ -4,18 +4,16 @@ using DireseekerMod.Components;
 using EntityStates;
 using RoR2;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
 namespace DireseekerMod.States
 {
 	public class Enrage : BaseState
 	{
-		private float lastUpdateTime;	//Maximum cope
 		public override void OnEnter()
 		{
 			base.OnEnter();
-
-			lastUpdateTime = Time.time;
 
 			this.stopwatch = 0f;
 			this.entryDuration = Enrage.baseEntryDuration / this.attackSpeedStat;
@@ -62,10 +60,7 @@ namespace DireseekerMod.States
 		{
 			base.FixedUpdate();
 
-			float deltaTime = Time.time - lastUpdateTime;
-			lastUpdateTime = Time.time;
-
-			this.stopwatch += deltaTime;
+			this.stopwatch += GetDeltaTime();
 			bool flag = this.stopwatch >= this.entryDuration && !this.hasEnraged;
 			if (flag)
 			{
@@ -88,7 +83,7 @@ namespace DireseekerMod.States
                         temporaryOverlay.animateShaderAlpha = true;
                         temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                         temporaryOverlay.destroyComponentOnEnd = true;
-                        temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
+                        temporaryOverlay.originalMaterial = onFireMat;
                         temporaryOverlay.inspectorCharacterModel = cm;
 						temporaryOverlay.Start();
                     }
@@ -118,7 +113,8 @@ namespace DireseekerMod.States
 			return InterruptPriority.Skill;
 		}
 
-		public static float baseEntryDuration = 1.5f;
+        private static Material onFireMat = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/matOnFire.mat").WaitForCompletion();
+        public static float baseEntryDuration = 1.5f;
 		public static float baseExitDuration = 3.5f;
 
 		private float stopwatch;

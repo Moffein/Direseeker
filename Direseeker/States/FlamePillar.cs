@@ -6,18 +6,20 @@ using EntityStates.LemurianBruiserMonster;
 using RoR2;
 using RoR2.Projectile;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
 namespace DireseekerMod.States
 {
 	public class FlamePillar : BaseState
 	{
-		private float lastUpdateTime;
-		private float deltaTime;
-		public override void OnEnter()
+        private static Material onFireMat = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/matOnFire.mat").WaitForCompletion();
+        private static GameObject predictionEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Meteor/MeteorStrikePredictionEffect.prefab").WaitForCompletion();
+        private static GameObject genericDelayBlast = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Common/GenericDelayBlast.prefab").WaitForCompletion();
+		private static GameObject magmaOrb = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaOrbExplosion.prefab").WaitForCompletion();
+        public override void OnEnter()
 		{
 			base.OnEnter();
-			lastUpdateTime = Time.time;
 			this.stopwatch = 0f;
 			bool flag = base.modelLocator;
 			if (flag)
@@ -45,7 +47,7 @@ namespace DireseekerMod.States
                             temporaryOverlay.animateShaderAlpha = true;
                             temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                             temporaryOverlay.destroyComponentOnEnd = true;
-                            temporaryOverlay.originalMaterial = LegacyResourcesAPI.Load<Material>("Materials/matOnFire");
+                            temporaryOverlay.originalMaterial = onFireMat;
 							temporaryOverlay.inspectorCharacterModel = cm;
 							temporaryOverlay.Start();
                         }
@@ -112,9 +114,7 @@ namespace DireseekerMod.States
 		{
 			base.FixedUpdate();
 
-			deltaTime = Time.time - lastUpdateTime;
-			lastUpdateTime = Time.time;
-			this.stopwatch += deltaTime;
+			this.stopwatch += GetDeltaTime();
 			switch (this.subState)
 			{
 				case FlamePillar.SubState.Prep:
@@ -187,13 +187,13 @@ namespace DireseekerMod.States
 
 		protected void PlaceSingleDelayBlast(Vector3 position, float delay)
 		{
-			EffectManager.SpawnEffect(LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/MeteorStrikePredictionEffect"), new EffectData
+			EffectManager.SpawnEffect(predictionEffect, new EffectData
 			{
 				origin = position,
 				scale = FlamePillar.pillarRadius,
 				rotation = Quaternion.identity
 			}, true);
-			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(LegacyResourcesAPI.Load<GameObject>("Prefabs/NetworkedObjects/GenericDelayBlast"), position, Quaternion.identity);
+			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(genericDelayBlast, position, Quaternion.identity);
 			DelayBlast component = gameObject.GetComponent<DelayBlast>();
 			component.position = position;
 			component.baseDamage = this.damageStat * FlamePillar.pillarDamageCoefficient;
@@ -204,7 +204,7 @@ namespace DireseekerMod.States
 			component.crit = base.RollCrit();
 			component.maxTimer = FlamePillar.entryDuration - FlamePillar.trackingDuration + delay;
 			component.falloffModel = BlastAttack.FalloffModel.None;
-			component.explosionEffect = LegacyResourcesAPI.Load<GameObject>("Prefabs/Projectiles/MagmaOrbProjectile").GetComponent<ProjectileImpactExplosion>().impactEffect;
+			component.explosionEffect = magmaOrb;
 			component.maxTimer = FlamePillar.pillarDelay;
 			component.damageType.damageSource = DamageSource.Utility;
 			gameObject.GetComponent<TeamFilter>().teamIndex = TeamComponent.GetObjectTeam(component.attacker);

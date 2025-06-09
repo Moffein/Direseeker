@@ -42,7 +42,7 @@ namespace DireseekerMod.Modules
 			Prefabs.direseekerBodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.localScale *= 1.5f;
 			Prefabs.direseekerBodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.localPosition = Vector3.up * -5.5f;
 
-            foreach (KinematicCharacterMotor kinematicCharacterMotor in Prefabs.direseekerBodyPrefab.GetComponentsInChildren<KinematicCharacterMotor>())
+			foreach (KinematicCharacterMotor kinematicCharacterMotor in Prefabs.direseekerBodyPrefab.GetComponentsInChildren<KinematicCharacterMotor>())
 			{
 				kinematicCharacterMotor.SetCapsuleDimensions(kinematicCharacterMotor.Capsule.radius * 1.5f, kinematicCharacterMotor.Capsule.height * 1.5f, 1.5f);
 			}
@@ -93,21 +93,21 @@ namespace DireseekerMod.Modules
 			SkinDef origSkin = Addressables.LoadAssetAsync<SkinDef>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser.skinLemurianBruiserBodyDefault_asset).WaitForCompletion();
 			SkinDef newDefaultSkin = UnityEngine.Object.Instantiate(origSkin);
 
-            //SkinDef isn't enough. The actual info is now stored in the SkinDefParams asset.
-            SkinDefParams origSkinDefParams = Addressables.LoadAssetAsync<SkinDefParams>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser_skinLemurianBruiserBodyDefault.params_asset).WaitForCompletion();
+			//SkinDef isn't enough. The actual info is now stored in the SkinDefParams asset.
+			SkinDefParams origSkinDefParams = Addressables.LoadAssetAsync<SkinDefParams>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser_skinLemurianBruiserBodyDefault.params_asset).WaitForCompletion();
 			newDefaultSkin.skinDefParams = UnityEngine.Object.Instantiate(origSkinDefParams);
 			newDefaultSkin.skinDefParamsAddress = new AssetReferenceT<SkinDefParams>("");
 			newDefaultSkin.rootObject = direseekerCharacterModel.gameObject;
 
 			//the data in SkinDefParams is set to reference the renderer from the original body. we must replace that with our renderer, which we will do in the rendererinfo and meshreplacements below.
-            Renderer bodyRenderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>();
+			Renderer bodyRenderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>();
 
-            ////this would be the way to modify the existing rendererinfo, but if we're doing this much work, might as well just pass in a new rendererinfo with this info.
-            //defaultSkin.skinDefParams.rendererInfos[0].defaultMaterial = direseekerMaterialCloned;
-            //defaultSkin.skinDefParams.rendererInfos[0].defaultMaterialAddress = new AssetReferenceT<Material>("");
-            //defaultSkin.skinDefParams.rendererInfos[0].renderer = bodyRenderer;
+			////this would be the way to modify the existing rendererinfo, but if we're doing this much work, might as well just pass in a new rendererinfo with this info.
+			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterial = direseekerMaterialCloned;
+			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterialAddress = new AssetReferenceT<Material>("");
+			//defaultSkin.skinDefParams.rendererInfos[0].renderer = bodyRenderer;
 
-            CharacterModel.RendererInfo[] newRendererInfos = new CharacterModel.RendererInfo[]
+			CharacterModel.RendererInfo[] newRendererInfos = new CharacterModel.RendererInfo[]
 			{
 				//defaultSkin.skinDefParams.rendererInfos[0],
 				new CharacterModel.RendererInfo
@@ -138,7 +138,7 @@ namespace DireseekerMod.Modules
 			newDefaultSkin.skinDefParams.meshReplacements[0].renderer = bodyRenderer;
 
 			//finally, replace the skin in the ModelSkinController with ours
-            direseekerCharacterModel.gameObject.GetComponent<ModelSkinController>().skins[0] = newDefaultSkin;
+			direseekerCharacterModel.gameObject.GetComponent<ModelSkinController>().skins[0] = newDefaultSkin;
 
 			Prefabs.masterPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserMaster.prefab").WaitForCompletion().InstantiateClone("DireseekerBossMaster", true);
 			CharacterMaster characterMaster = Prefabs.masterPrefab.GetComponent<CharacterMaster>();

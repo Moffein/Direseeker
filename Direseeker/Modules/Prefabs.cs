@@ -39,8 +39,10 @@ namespace DireseekerMod.Modules
 			component.isChampion = true;
 			component.portraitIcon = Assets.bossPortrait;
 			Prefabs.direseekerBodyPrefab.GetComponent<SfxLocator>().deathSound = "DireseekerDeath";
-			Prefabs.direseekerBodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.gameObject.transform.localScale *= 1.5f;
-			foreach (KinematicCharacterMotor kinematicCharacterMotor in Prefabs.direseekerBodyPrefab.GetComponentsInChildren<KinematicCharacterMotor>())
+			Prefabs.direseekerBodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.localScale *= 1.5f;
+			Prefabs.direseekerBodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.localPosition = Vector3.up * -5.5f;
+
+            foreach (KinematicCharacterMotor kinematicCharacterMotor in Prefabs.direseekerBodyPrefab.GetComponentsInChildren<KinematicCharacterMotor>())
 			{
 				kinematicCharacterMotor.SetCapsuleDimensions(kinematicCharacterMotor.Capsule.radius * 1.5f, kinematicCharacterMotor.Capsule.height * 1.5f, 1.5f);
 			}
@@ -87,25 +89,30 @@ namespace DireseekerMod.Modules
 			direseekerMaterialCloned.SetTexture("_EmTex", Assets.mainAssetBundle.LoadAsset<Material>("matDireseeker").GetTexture("_EmissionMap"));
 			direseekerMaterialCloned.SetFloat("_EmPower", 50f);
 
+			//clone the SkinDef from original monster
 			SkinDef origSkin = Addressables.LoadAssetAsync<SkinDef>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser.skinLemurianBruiserBodyDefault_asset).WaitForCompletion();
-			SkinDef defaultSkin = UnityEngine.Object.Instantiate(origSkin);
-			direseekerCharacterModel.gameObject.GetComponent<ModelSkinController>().skins[0] = defaultSkin;
+			SkinDef newDefaultSkin = UnityEngine.Object.Instantiate(origSkin);
 
-			SkinDefParams origSkinDefParams = Addressables.LoadAssetAsync<SkinDefParams>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser_skinLemurianBruiserBodyDefault.params_asset).WaitForCompletion();
-			defaultSkin.skinDefParams = UnityEngine.Object.Instantiate(origSkinDefParams);
-			defaultSkin.skinDefParamsAddress = new AssetReferenceT<SkinDefParams>("");
-			defaultSkin.rootObject = direseekerCharacterModel.gameObject;
+            //SkinDef isn't enough. The actual info is now stored in the SkinDefParams asset.
+            SkinDefParams origSkinDefParams = Addressables.LoadAssetAsync<SkinDefParams>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser_skinLemurianBruiserBodyDefault.params_asset).WaitForCompletion();
+			newDefaultSkin.skinDefParams = UnityEngine.Object.Instantiate(origSkinDefParams);
+			newDefaultSkin.skinDefParamsAddress = new AssetReferenceT<SkinDefParams>("");
+			newDefaultSkin.rootObject = direseekerCharacterModel.gameObject;
 
-			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterial = direseekerMaterialCloned;
-			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterialAddress = new AssetReferenceT<Material>("");
-			//defaultSkin.skinDefParams.rendererInfos[0].renderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>();
+			//the data in SkinDefParams is set to reference the renderer from the original body. we must replace that with our renderer, which we will do in the rendererinfo and meshreplacements below.
+            Renderer bodyRenderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>();
 
-			CharacterModel.RendererInfo[] newRendererInfos = new CharacterModel.RendererInfo[]
+            ////this would be the way to modify the existing rendererinfo, but if we're doing this much work, might as well just pass in a new rendererinfo with this info.
+            //defaultSkin.skinDefParams.rendererInfos[0].defaultMaterial = direseekerMaterialCloned;
+            //defaultSkin.skinDefParams.rendererInfos[0].defaultMaterialAddress = new AssetReferenceT<Material>("");
+            //defaultSkin.skinDefParams.rendererInfos[0].renderer = bodyRenderer;
+
+            CharacterModel.RendererInfo[] newRendererInfos = new CharacterModel.RendererInfo[]
 			{
 				//defaultSkin.skinDefParams.rendererInfos[0],
 				new CharacterModel.RendererInfo
 				{
-					renderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>(),
+					renderer = bodyRenderer,
 					defaultMaterial = direseekerMaterialCloned,
 					defaultShadowCastingMode = ShadowCastingMode.On,
 					ignoreOverlays = false,
@@ -125,24 +132,13 @@ namespace DireseekerMod.Modules
 					ignoreOverlays = true
 				}
 			};
-			defaultSkin.skinDefParams.rendererInfos = newRendererInfos;
-			//
+			newDefaultSkin.skinDefParams.rendererInfos = newRendererInfos;
 
-			Debug.LogWarning("printing original rendererinfos");
-			for (int i = 0; i < origSkinDefParams.rendererInfos.Length; i++)
-			{
-				Debug.Log(origSkinDefParams.rendererInfos[i].renderer);
-				Debug.Log(origSkinDefParams.rendererInfos[i].defaultMaterial);
-				Debug.Log(origSkinDefParams.rendererInfos[i].defaultMaterialAddress);
-			}
+			//must also replace the referenced renderer in the meshreplacements
+			newDefaultSkin.skinDefParams.meshReplacements[0].renderer = bodyRenderer;
 
-			Debug.LogWarning("printing new rendererinfos");
-			for (int i = 0; i < defaultSkin.skinDefParams.rendererInfos.Length; i++)
-			{
-				Debug.Log(defaultSkin.skinDefParams.rendererInfos[i].renderer);
-				Debug.Log(defaultSkin.skinDefParams.rendererInfos[i].defaultMaterial);
-				Debug.Log(defaultSkin.skinDefParams.rendererInfos[i].defaultMaterialAddress);
-			}
+			//finally, replace the skin in the ModelSkinController with ours
+            direseekerCharacterModel.gameObject.GetComponent<ModelSkinController>().skins[0] = newDefaultSkin;
 
 			Prefabs.masterPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserMaster.prefab").WaitForCompletion().InstantiateClone("DireseekerBossMaster", true);
 			CharacterMaster characterMaster = Prefabs.masterPrefab.GetComponent<CharacterMaster>();

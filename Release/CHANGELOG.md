@@ -1,3 +1,8 @@
+`1.5.0`
+- fixed for MemOp
+- made fireballs actually come from his mouth
+- lowered his feet to the floor
+
 `1.4.8`
 
 - Fixed for latest update.

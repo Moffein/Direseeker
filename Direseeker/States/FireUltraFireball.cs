@@ -55,9 +55,18 @@ namespace DireseekerMod.States
 						aimRay = PredictAimRay(aimRay, speedOverride);
                     }
 
+					Vector3 aimPoint = aimRay.GetPoint(100);
+					if (Physics.Raycast(aimRay, out RaycastHit hitInfo, 100, LayerIndex.CommonMasks.bullet, QueryTriggerInteraction.UseGlobal))
+					{
+						aimPoint = hitInfo.point;
+					}
+					Vector3 mouthOrigin = FindModelChild(muzzleName).position;
+
+					aimRay = new Ray(mouthOrigin, aimPoint - mouthOrigin);
+
 					float bonusYaw = (float)Mathf.FloorToInt((float)this.projectilesFired - (float)(FireUltraFireball.projectileCount - 1) / 2f) / (float)(FireUltraFireball.projectileCount - 1) * FireUltraFireball.totalYawSpread;
 					Vector3 forward = Util.ApplySpread(aimRay.direction, 0f, 0f, 1f, 1f, bonusYaw, 0f);
-					ProjectileManager.instance.FireProjectile(Projectiles.fireballPrefab, aimRay.origin, Util.QuaternionSafeLookRotation(forward), base.gameObject, this.damageStat * FireUltraFireball.damageCoefficient, FireUltraFireball.force, base.RollCrit(), DamageColorIndex.Default, null, speedOverride);
+					ProjectileManager.instance.FireProjectile(Projectiles.fireballPrefab, mouthOrigin, Util.QuaternionSafeLookRotation(forward), base.gameObject, this.damageStat * FireUltraFireball.damageCoefficient, FireUltraFireball.force, base.RollCrit(), DamageColorIndex.Default, null, speedOverride);
 					this.projectilesFired++;
 				}
 			}

@@ -96,6 +96,7 @@ namespace DireseekerMod.Modules
 			//SkinDef isn't enough. The actual info is now stored in the SkinDefParams asset.
 			SkinDefParams origSkinDefParams = Addressables.LoadAssetAsync<SkinDefParams>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser_skinLemurianBruiserBodyDefault.params_asset).WaitForCompletion();
 			newDefaultSkin.skinDefParams = UnityEngine.Object.Instantiate(origSkinDefParams);
+			//vanilla skins use an address instead of a direct reference. We're removing the address and using a direct reference instead.
 			newDefaultSkin.skinDefParamsAddress = new AssetReferenceT<SkinDefParams>("");
 			newDefaultSkin.rootObject = direseekerCharacterModel.gameObject;
 
@@ -104,6 +105,7 @@ namespace DireseekerMod.Modules
 
 			////this would be the way to modify the existing rendererinfo, but if we're doing this much work, might as well just pass in a new rendererinfo with this info.
 			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterial = direseekerMaterialCloned;
+			////vanilla skins use an address instead of a direct reference. We're removing the address to do the opposite
 			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterialAddress = new AssetReferenceT<Material>("");
 			//defaultSkin.skinDefParams.rendererInfos[0].renderer = bodyRenderer;
 

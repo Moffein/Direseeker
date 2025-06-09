@@ -12,7 +12,7 @@ namespace DireseekerMod.Modules
 	{
 		public static void RegisterStates()
 		{
-			GameObject bodyPrefab = Prefabs.bodyPrefab;
+			GameObject bodyPrefab = Prefabs.direseekerBodyPrefab;
 
 			bool temp;
 			ContentAddition.AddEntityState<Listening>(out temp);

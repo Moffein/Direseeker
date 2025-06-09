@@ -31,7 +31,7 @@ namespace DireseekerMod.Modules
 			ProjectileDamage fireballGroundDamage = fireballGroundPrefab.GetComponent<ProjectileDamage>();
             fireballGroundDamage.damageType.damageSource = DamageSource.Primary;
 
-            Projectiles.fireballGroundPrefab.GetComponent<ProjectileController>().ghostPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaOrbGhost.prefab").WaitForCompletion().GetComponent<ProjectileController>().ghostPrefab;
+            Projectiles.fireballGroundPrefab.GetComponent<ProjectileController>().ghostPrefab = Addressables.LoadAssetAsync<GameObject>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_MagmaWorm.MagmaOrbGhost_prefab).WaitForCompletion();
 			Projectiles.fireballGroundPrefab.GetComponent<ProjectileImpactExplosion>().impactEffect = impactEffect;
 			Projectiles.fireTrailPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Common/FireTrail.prefab").WaitForCompletion().InstantiateClone("DireseekerBossFireTrail", true);
 			Projectiles.fireTrailPrefab.AddComponent<NetworkIdentity>();

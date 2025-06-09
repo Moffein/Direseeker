@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#exclude language files from release folder on repo so there aren't two language folders to confuse people
+#post build will language copy to the release folder
+Release/plugins/EnforcerGang-Direseeker/language*
+
 # User-specific files
 *.rsuser
 *.suo
@@ -19,8 +23,6 @@ mono_crash.*
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
 x64/
 x86/
 [Ww][Ii][Nn]32/

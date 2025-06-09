@@ -15,20 +15,19 @@ namespace DireseekerMod.Modules
 	{
 		public static void CreatePrefab()
         {
-            Prefabs.bodyPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserBody.prefab").WaitForCompletion().InstantiateClone("DireseekerBody", true);
+            Prefabs.direseekerBodyPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserBody.prefab").WaitForCompletion().InstantiateClone("DireseekerBody", true);
 
-            Rigidbody rb = Prefabs.bodyPrefab.GetComponent<Rigidbody>();
+            Rigidbody rb = Prefabs.direseekerBodyPrefab.GetComponent<Rigidbody>();
 			if (rb) rb.mass = 900;
 
 
-            //Add DeathReward
-            //This causes all its drops to be replaced by the Perforator. Why?
-            /*GameObject WormPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaWormBody.prefab").WaitForCompletion();
+			//Add DeathReward
+			//This causes all its drops to be replaced by the Perforator. Why?
+			/*GameObject WormPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaWormBody.prefab").WaitForCompletion();
 			DeathRewards deathReward = Prefabs.bodyPrefab.GetComponent<DeathRewards>();
 			deathReward.bossDropTable = WormPrefab.GetComponent<DeathRewards>().bossDropTable;*/
-
-            UnityEngine.Object.Destroy(Prefabs.bodyPrefab.GetComponent<SetStateOnHurt>());
-			CharacterBody component = Prefabs.bodyPrefab.GetComponent<CharacterBody>();
+            UnityEngine.Object.Destroy(Prefabs.direseekerBodyPrefab.GetComponent<SetStateOnHurt>());
+			CharacterBody component = Prefabs.direseekerBodyPrefab.GetComponent<CharacterBody>();
 			component.name = "DireseekerBossBody";
 			component.baseNameToken = "DIRESEEKER_BOSS_BODY_NAME";
 			component.subtitleNameToken = "DIRESEEKER_BOSS_BODY_SUBTITLE";
@@ -39,81 +38,123 @@ namespace DireseekerMod.Modules
 			component.levelDamage = component.baseDamage * 0.2f;
 			component.isChampion = true;
 			component.portraitIcon = Assets.bossPortrait;
-			Prefabs.bodyPrefab.GetComponent<SfxLocator>().deathSound = "DireseekerDeath";
-			Prefabs.bodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.gameObject.transform.localScale *= 1.5f;
-			foreach (KinematicCharacterMotor kinematicCharacterMotor in Prefabs.bodyPrefab.GetComponentsInChildren<KinematicCharacterMotor>())
+			Prefabs.direseekerBodyPrefab.GetComponent<SfxLocator>().deathSound = "DireseekerDeath";
+			Prefabs.direseekerBodyPrefab.GetComponent<ModelLocator>().modelBaseTransform.gameObject.transform.localScale *= 1.5f;
+			foreach (KinematicCharacterMotor kinematicCharacterMotor in Prefabs.direseekerBodyPrefab.GetComponentsInChildren<KinematicCharacterMotor>())
 			{
 				kinematicCharacterMotor.SetCapsuleDimensions(kinematicCharacterMotor.Capsule.radius * 1.5f, kinematicCharacterMotor.Capsule.height * 1.5f, 1.5f);
 			}
-			CharacterModel componentInChildren = Prefabs.bodyPrefab.GetComponentInChildren<CharacterModel>();
-			Material material = UnityEngine.Object.Instantiate<Material>(componentInChildren.baseRendererInfos[0].defaultMaterial);
-			material.SetTexture("_MainTex", Assets.mainAssetBundle.LoadAsset<Material>("matDireseeker").GetTexture("_MainTex"));
-			material.SetTexture("_EmTex", Assets.mainAssetBundle.LoadAsset<Material>("matDireseeker").GetTexture("_EmissionMap"));
-			material.SetFloat("_EmPower", 50f);
-			componentInChildren.baseRendererInfos[0].defaultMaterial = material;
-			GameObject gameObject = Assets.mainAssetBundle.LoadAsset<GameObject>("DireHorn").InstantiateClone("DireseekerHorn", false);
-			GameObject gameObject2 = Assets.mainAssetBundle.LoadAsset<GameObject>("DireHornBroken").InstantiateClone("DireseekerHornBroken", false);
-			GameObject gameObject3 = Assets.mainAssetBundle.LoadAsset<GameObject>("DireseekerRageFlame").InstantiateClone("DireseekerRageFlame", false);
-			GameObject gameObject4 = Assets.mainAssetBundle.LoadAsset<GameObject>("DireseekerBurstFlame").InstantiateClone("DireseekerBurstFlame", false);
-			ChildLocator componentInChildren2 = Prefabs.bodyPrefab.GetComponentInChildren<ChildLocator>();
-			gameObject.transform.SetParent(componentInChildren2.FindChild("Head"));
-			gameObject.transform.localPosition = new Vector3(-2.5f, 1f, -0.5f);
-			gameObject.transform.localRotation = Quaternion.Euler(new Vector3(45f, 0f, 90f));
-			gameObject.transform.localScale = new Vector3(100f, 100f, 100f);
-			gameObject2.transform.SetParent(componentInChildren2.FindChild("Head"));
-			gameObject2.transform.localPosition = new Vector3(2.5f, 1f, -0.5f);
-			gameObject2.transform.localRotation = Quaternion.Euler(new Vector3(45f, 0f, 90f));
-			gameObject2.transform.localScale = new Vector3(100f, -100f, 100f);
-			gameObject3.transform.SetParent(componentInChildren2.FindChild("Head"));
-			gameObject3.transform.localPosition = new Vector3(0f, 1f, 0f);
-			gameObject3.transform.localRotation = Quaternion.Euler(new Vector3(270f, 180f, 0f));
-			gameObject3.transform.localScale = new Vector3(4f, 4f, 4f);
-			gameObject4.transform.SetParent(componentInChildren2.FindChild("Head"));
-			gameObject4.transform.localPosition = new Vector3(0f, 1f, 0f);
-			gameObject4.transform.localRotation = Quaternion.Euler(new Vector3(270f, 180f, 0f));
-			gameObject4.transform.localScale = new Vector3(6f, 6f, 6f);
-			DireseekerController direseekerController = Prefabs.bodyPrefab.AddComponent<DireseekerController>();
-			direseekerController.burstFlame = gameObject4.GetComponent<ParticleSystem>();
-			direseekerController.rageFlame = gameObject3.GetComponent<ParticleSystem>();
+
+            GameObject direseekerHorn = Assets.mainAssetBundle.LoadAsset<GameObject>("DireHorn").InstantiateClone("DireseekerHorn", false);
+			GameObject DireseekerHornBroken = Assets.mainAssetBundle.LoadAsset<GameObject>("DireHornBroken").InstantiateClone("DireseekerHornBroken", false);
+			GameObject DireseekerRageFlame = Assets.mainAssetBundle.LoadAsset<GameObject>("DireseekerRageFlame").InstantiateClone("DireseekerRageFlame", false);
+			GameObject DireseekerBurstFlame = Assets.mainAssetBundle.LoadAsset<GameObject>("DireseekerBurstFlame").InstantiateClone("DireseekerBurstFlame", false);
+			
+			ChildLocator childLocator = Prefabs.direseekerBodyPrefab.GetComponentInChildren<ChildLocator>();
+			direseekerHorn.transform.SetParent(childLocator.FindChild("Head"));
+			direseekerHorn.transform.localPosition = new Vector3(-2.5f, 1f, -0.5f);
+			direseekerHorn.transform.localRotation = Quaternion.Euler(new Vector3(45f, 0f, 90f));
+			direseekerHorn.transform.localScale = new Vector3(100f, 100f, 100f);
+            Shader shader = Addressables.LoadAssetAsync<Shader>("RoR2/Base/Shaders/HGStandard.shader").WaitForCompletion();
+            Material hornMaterial = direseekerHorn.GetComponentInChildren<MeshRenderer>().material;
+            hornMaterial.shader = shader;
+
+            DireseekerHornBroken.transform.SetParent(childLocator.FindChild("Head"));
+			DireseekerHornBroken.transform.localPosition = new Vector3(2.5f, 1f, -0.5f);
+			DireseekerHornBroken.transform.localRotation = Quaternion.Euler(new Vector3(45f, 0f, 90f));
+			DireseekerHornBroken.transform.localScale = new Vector3(100f, -100f, 100f);
+
+			DireseekerRageFlame.transform.SetParent(childLocator.FindChild("Head"));
+			DireseekerRageFlame.transform.localPosition = new Vector3(0f, 1f, 0f);
+			DireseekerRageFlame.transform.localRotation = Quaternion.Euler(new Vector3(270f, 180f, 0f));
+			DireseekerRageFlame.transform.localScale = new Vector3(4f, 4f, 4f);
+
+			DireseekerBurstFlame.transform.SetParent(childLocator.FindChild("Head"));
+			DireseekerBurstFlame.transform.localPosition = new Vector3(0f, 1f, 0f);
+			DireseekerBurstFlame.transform.localRotation = Quaternion.Euler(new Vector3(270f, 180f, 0f));
+			DireseekerBurstFlame.transform.localScale = new Vector3(6f, 6f, 6f);
+
+			DireseekerController direseekerController = Prefabs.direseekerBodyPrefab.AddComponent<DireseekerController>();
+			direseekerController.burstFlame = DireseekerBurstFlame.GetComponent<ParticleSystem>();
+			direseekerController.rageFlame = DireseekerRageFlame.GetComponent<ParticleSystem>();
 			direseekerController.rageFlame.Stop();
 
-			//This section nullrefs.
-            Shader shader = Addressables.LoadAssetAsync<Shader>("RoR2/Base/Shaders/HGStandard.shader").WaitForCompletion();
-			Material material2 = gameObject.GetComponentInChildren<MeshRenderer>().material;
-			material2.shader = shader;
-			CharacterModel.RendererInfo[] baseRendererInfos = componentInChildren.baseRendererInfos;
-			CharacterModel.RendererInfo[] baseRendererInfos2 = new CharacterModel.RendererInfo[]
+            CharacterModel direseekerCharacterModel = Prefabs.direseekerBodyPrefab.GetComponentInChildren<CharacterModel>();
+			direseekerCharacterModel.gameObject.name = "mdlDireseeker";
+            Material direseekerMaterialCloned = new Material(Addressables.LoadAssetAsync<Material>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_Lemurian.matLemurianBruiser_mat).WaitForCompletion());
+			direseekerMaterialCloned.name = "matDireseekerMesh";
+            direseekerMaterialCloned.SetTexture("_MainTex", Assets.mainAssetBundle.LoadAsset<Material>("matDireseeker").GetTexture("_MainTex"));
+            direseekerMaterialCloned.SetTexture("_EmTex", Assets.mainAssetBundle.LoadAsset<Material>("matDireseeker").GetTexture("_EmissionMap"));
+            direseekerMaterialCloned.SetFloat("_EmPower", 50f);
+
+			SkinDef origSkin = Addressables.LoadAssetAsync<SkinDef>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser.skinLemurianBruiserBodyDefault_asset).WaitForCompletion();
+            SkinDef defaultSkin = UnityEngine.Object.Instantiate(origSkin);
+			direseekerCharacterModel.gameObject.GetComponent<ModelSkinController>().skins[0] = defaultSkin;
+
+            SkinDefParams origSkinDefParams = Addressables.LoadAssetAsync<SkinDefParams>(RoR2BepInExPack.GameAssetPaths.RoR2_Base_LemurianBruiser_skinLemurianBruiserBodyDefault.params_asset).WaitForCompletion();
+            defaultSkin.skinDefParams = UnityEngine.Object.Instantiate(origSkinDefParams);
+			defaultSkin.skinDefParamsAddress = new AssetReferenceT<SkinDefParams>("");
+			defaultSkin.rootObject = direseekerCharacterModel.gameObject;
+
+			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterial = direseekerMaterialCloned;
+			//defaultSkin.skinDefParams.rendererInfos[0].defaultMaterialAddress = new AssetReferenceT<Material>("");
+			//defaultSkin.skinDefParams.rendererInfos[0].renderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>();
+
+            CharacterModel.RendererInfo[] newRendererInfos = new CharacterModel.RendererInfo[]
 			{
-				baseRendererInfos[0],
+                //defaultSkin.skinDefParams.rendererInfos[0],
 				new CharacterModel.RendererInfo
 				{
-					renderer = gameObject.GetComponentInChildren<MeshRenderer>(),
-					defaultMaterial = material2,
+					renderer = direseekerCharacterModel.transform.Find("LemurianBruiserMesh").GetComponent<Renderer>(),
+					defaultMaterial = direseekerMaterialCloned,
+                    defaultShadowCastingMode = ShadowCastingMode.On,
+                    ignoreOverlays = false,
+                },
+				new CharacterModel.RendererInfo
+				{
+					renderer = direseekerHorn.GetComponentInChildren<MeshRenderer>(),
+					defaultMaterial = hornMaterial,
 					defaultShadowCastingMode = ShadowCastingMode.On,
 					ignoreOverlays = true
 				},
 				new CharacterModel.RendererInfo
 				{
-					renderer = gameObject2.GetComponentInChildren<MeshRenderer>(),
-					defaultMaterial = material2,
+					renderer = DireseekerHornBroken.GetComponentInChildren<MeshRenderer>(),
+					defaultMaterial = hornMaterial,
 					defaultShadowCastingMode = ShadowCastingMode.On,
 					ignoreOverlays = true
 				}
 			};
-			componentInChildren.baseRendererInfos = baseRendererInfos2;
-			//
+            defaultSkin.skinDefParams.rendererInfos = newRendererInfos;
+            //
+
+            Debug.LogWarning("printing original rendererinfos");
+            for (int i = 0; i < origSkinDefParams.rendererInfos.Length; i++)
+            {
+                Debug.Log(origSkinDefParams.rendererInfos[i].renderer);
+                Debug.Log(origSkinDefParams.rendererInfos[i].defaultMaterial);
+                Debug.Log(origSkinDefParams.rendererInfos[i].defaultMaterialAddress);
+            }
+
+            Debug.LogWarning("printing new rendererinfos");
+            for (int i = 0; i < defaultSkin.skinDefParams.rendererInfos.Length; i++)
+            {
+                Debug.Log(defaultSkin.skinDefParams.rendererInfos[i].renderer);
+                Debug.Log(defaultSkin.skinDefParams.rendererInfos[i].defaultMaterial);
+                Debug.Log(defaultSkin.skinDefParams.rendererInfos[i].defaultMaterialAddress);
+            }
 
             Prefabs.masterPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LemurianBruiser/LemurianBruiserMaster.prefab").WaitForCompletion().InstantiateClone("DireseekerBossMaster", true);
-			CharacterMaster component2 = Prefabs.masterPrefab.GetComponent<CharacterMaster>();
-			component2.bodyPrefab = Prefabs.bodyPrefab;
-			component2.isBoss = true;
+			CharacterMaster characterMaster = Prefabs.masterPrefab.GetComponent<CharacterMaster>();
+			characterMaster.bodyPrefab = Prefabs.direseekerBodyPrefab;
+			characterMaster.isBoss = true;
 			Prefabs.CreateAI();
 
-			ContentAddition.AddBody(Prefabs.bodyPrefab);
+			ContentAddition.AddBody(Prefabs.direseekerBodyPrefab);
 			ContentAddition.AddMaster(Prefabs.masterPrefab);
-		}
+        }
 
-		private static void CreateAI()
+        private static void CreateAI()
 		{
 			foreach (AISkillDriver obj in Prefabs.masterPrefab.GetComponentsInChildren<AISkillDriver>())
 			{
@@ -239,7 +280,7 @@ namespace DireseekerMod.Modules
 			aiskillDriver6.skillSlot = SkillSlot.None;
 		}
 
-		public static GameObject bodyPrefab;
+		public static GameObject direseekerBodyPrefab;
 		public static GameObject masterPrefab;
 
 	}

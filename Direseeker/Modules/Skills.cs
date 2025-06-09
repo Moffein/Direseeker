@@ -13,7 +13,7 @@ namespace DireseekerMod.Modules
 	{
 		public static void RegisterSkills()
 		{
-			GameObject bodyPrefab = Prefabs.bodyPrefab;
+			GameObject bodyPrefab = Prefabs.direseekerBodyPrefab;
 			foreach (GenericSkill obj in bodyPrefab.GetComponentsInChildren<GenericSkill>())
 			{
 				UnityEngine.Object.DestroyImmediate(obj);

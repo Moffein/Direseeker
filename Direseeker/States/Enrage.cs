@@ -55,12 +55,10 @@ namespace DireseekerMod.States
 		{
 			if (!NetworkServer.active) return;
 
-			Transform chest = this.FindModelChild("Chest");
-            GameObject sun = UnityEngine.Object.Instantiate<GameObject>(Modules.Assets.sunPrefab, chest.position, Quaternion.identity, transform);
-			sun.transform.parent = chest;
+            GameObject sun = UnityEngine.Object.Instantiate<GameObject>(Modules.Assets.sunPrefab);
             sun.GetComponent<GenericOwnership>().ownerObject = base.gameObject;
             NetworkServer.Spawn(sun);
-            sun.GetComponent<DireseekerSunNetworkController>().RpcPosition(chest.gameObject);
+            sun.GetComponent<DireseekerSunNetworkController>().RpcPosition(base.gameObject);
         }
 
 		public override void FixedUpdate()

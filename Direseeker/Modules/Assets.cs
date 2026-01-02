@@ -1,4 +1,5 @@
 ﻿using DireseekerMod.Components;
+using DireseekerMod.States;
 using DireseekerMod.States.Missions.DireseekerEncounter;
 using EntityStates;
 using R2API;
@@ -85,6 +86,19 @@ namespace DireseekerMod.Modules
             sc.radius = 120f;
 
 			flamePillarPredictionEffect = PrefabAPI.InstantiateClone(Addressables.LoadAssetAsync<GameObject>("RoR2/DLC2/Items/MeteorAttackOnHighDamage/RunicMeteorStrikePredictionEffect.prefab").WaitForCompletion(), "DireseekerPredictionEffect", true);
+            flamePillarPredictionEffect.GetComponent<DestroyOnTimer>().duration = FlamePillar.pillarDelay;
+
+            var shaderAlphas = flamePillarPredictionEffect.GetComponentsInChildren<AnimateShaderAlpha>(true);
+            for (int i = 0; i < shaderAlphas.Length; i++)
+            {
+                shaderAlphas[i].timeMax = FlamePillar.pillarDelay;
+            }
+
+            var objectScaleCurve = flamePillarPredictionEffect.GetComponentsInChildren<ObjectScaleCurve>(true);
+            for (int i = 0; i < objectScaleCurve.Length; i++)
+            {
+                objectScaleCurve[i].timeMax = FlamePillar.pillarDelay;
+            }
             ContentAddition.AddEffect(flamePillarPredictionEffect);
 
             sunPrefab = PrefabAPI.InstantiateClone(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandParentSun.prefab").WaitForCompletion(), "DireseekerSun", true);
@@ -112,7 +126,7 @@ namespace DireseekerMod.Modules
 
             //VFX - Use StaticValues.cruelSunVfxSize to control the scale, changing anything here will cause it not to align with gameplay logic anymore.
             sunPrefab.transform.localScale = Vector3.one * 1f;
-            sunPrefab.transform.Find("VfxRoot/LightSpinner/LightSpinner/Point Light").GetComponent<Light>().intensity *= 1f;
+            sunPrefab.transform.Find("VfxRoot/LightSpinner/LightSpinner/Point Light").GetComponent<Light>().intensity *= 0.1f;
             sunPrefab.transform.Find("VfxRoot/LightSpinner/LightSpinner/Point Light").GetComponent<Light>().range = 200 * 1f;
             sunPrefab.transform.Find("VfxRoot/Mesh/SunMesh").transform.localScale = Vector3.one * 1f;
             sunPrefab.transform.Find("VfxRoot/Mesh/AreaIndicator").transform.localScale = Vector3.one * 180;

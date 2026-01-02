@@ -14,7 +14,7 @@ namespace Direseeker
     [BepInDependency(R2API.ContentManagement.R2APIContentManager.PluginGUID)]
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-	[BepInPlugin("com.rob.Direseeker", "Direseeker", "2.0.0")]
+	[BepInPlugin("com.rob.Direseeker", "Direseeker", "2.0.609")]
 	public class DireseekerPlugin : BaseUnityPlugin
 	{
 		public static bool AccurateEnemiesLoaded = false;

@@ -10,10 +10,11 @@ public class DireseekerSunNetworkController : NetworkBehaviour
 {
 
     [ClientRpc]
-    public void RpcPosition(GameObject parentTransform)
+    public void RpcPosition(GameObject networkedGameObject)
     {
-        transform.SetParent(parentTransform.transform);
-        transform.localPosition = new Vector3(0, 0, 0);
+        var childLocator = networkedGameObject.GetComponent<ModelLocator>().modelTransform.GetComponent<ChildLocator>().FindChild("Chest");
+        transform.SetParent(childLocator);
+        transform.position = transform.parent.position + Vector3.up * DireseekerSunController.sunHeight;
     }
 }
 
@@ -29,6 +30,8 @@ public class DireseekerSunController : MonoBehaviour
     public BuffDef buffDef;
 
     public GameObject buffApplyEffect;
+
+    public static float sunHeight = 5;//avoids crazy misleading shadows from the body itself
 
     [SerializeField]
     public LoopSoundDef activeLoopDef;
@@ -77,6 +80,8 @@ public class DireseekerSunController : MonoBehaviour
         OnDestroy();
     }
 
+    
+
     private void OnDestroy()
     {
         if ((bool)activeLoopDef)
@@ -93,6 +98,14 @@ public class DireseekerSunController : MonoBehaviour
         }
         //Fix the damn loop sound
         AkSoundEngine.StopPlayingID(3203163036);
+    }
+
+    void LateUpdate()
+    {
+        if(transform.parent != null)
+        {
+            transform.position = transform.parent.position + Vector3.up * DireseekerSunController.sunHeight;
+        }
     }
 
     private void FixedUpdate()
@@ -147,17 +160,17 @@ public class DireseekerSunController : MonoBehaviour
                 CharacterBody body = hurtBox.healthComponent.body;
                 //Only perform extra logic IF ALL ARE TRUE:
                 //ownerBody still exists (avoids NRE)
-                //The target is an enemy OR The target is an ally and has less than 3 stacks of overheat (capping ally overheat at 3)
+                //The target is an ally OR The target is an enemy and has less than 3 stacks of overheat (capping enemy overheat at 3)
                 //The target is NOT immune to overheat, OR they are not a player (gets around Grandparent immunity)
                 //Known possible issue (untested): might still affect enemies who have Ben's Raincoat because of this logic
 
                 if (ownerBody)
                 {
-
-                    bool isEnemy = (body.teamComponent.teamIndex != ownerBody.teamComponent.teamIndex);
-                    bool affectPlayer = !isEnemy && 8f > 0 && body.GetBuffCount(RoR2Content.Buffs.Overheat) < 5;
+                    //just do same behavior for all
+                    bool isAlly = false;// (body.teamComponent.teamIndex == ownerBody.teamComponent.teamIndex);
+                    bool affectEnemy = !isAlly && 8f > 0 && body.GetBuffCount(RoR2Content.Buffs.Overheat) < 5;
                     bool overrideEnemyImmune = ((body.bodyFlags & CharacterBody.BodyFlags.OverheatImmune) == 0 || body.teamComponent.teamIndex != TeamIndex.Player);
-                    if ((isEnemy || affectPlayer) && overrideEnemyImmune)
+                    if ((isAlly || affectEnemy) && overrideEnemyImmune)
                     {
 
                         Vector3 corePosition = body.corePosition;
@@ -195,7 +208,7 @@ public class DireseekerSunController : MonoBehaviour
                                     {
                                         ffScale *= teamDef.friendlyFireScaling;
                                     }
-                                    float critScale = isEnemy && crit ? 2 : 1;
+                                    float critScale = isAlly && crit ? 2 : 1;
                                     if (body.teamComponent.teamIndex == ownerBody.teamComponent.teamIndex & body != ownerBody) { ffScale *= 8f; }
                                     dotInfo.totalDamage = 0.01f * ownerBody.damage * (float)overheatCount * ffScale * critScale;
                                     dotInfo.damageMultiplier = 1f * ffScale;

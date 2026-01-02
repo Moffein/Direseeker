@@ -24,7 +24,6 @@ namespace DireseekerMod.Modules
 			ContentAddition.AddEntityState<FlamePillar>(out temp);
 			ContentAddition.AddEntityState<FlamePillars>(out temp);
 			ContentAddition.AddEntityState<Enrage>(out temp);
-            ContentAddition.AddEntityState<SunBase>(out temp);
             ContentAddition.AddEntityState<SunDeath>(out temp);
             ContentAddition.AddEntityState<SunMain>(out temp);
             ContentAddition.AddEntityState<SunSpawn>(out temp);

@@ -14,7 +14,7 @@ namespace DireseekerMod.States
 	public class FlamePillar : BaseState
 	{
         private static Material onFireMat = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/matOnFire.mat").WaitForCompletion();
-        private static GameObject predictionEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Meteor/MeteorStrikePredictionEffect.prefab").WaitForCompletion();
+		private static GameObject predictionEffect => Modules.Assets.flamePillarPredictionEffect;
         private static GameObject genericDelayBlast = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Common/GenericDelayBlast.prefab").WaitForCompletion();
 		private static GameObject magmaOrb = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/MagmaWorm/MagmaOrbExplosion.prefab").WaitForCompletion();
         public override void OnEnter()
@@ -69,8 +69,8 @@ namespace DireseekerMod.States
 			}
 			base.PlayAnimation("Gesture, Override", "PrepFlamebreath", "PrepFlamebreath.playbackRate", FlamePillar.entryDuration);
 			this.subState = FlamePillar.SubState.Prep;
-			//Util.PlaySound("DireseekerAttack", base.gameObject);
-			Util.PlaySound("Play_magmaWorm_spawn_VO", base.gameObject);
+			Util.PlaySound("sfx_direseeker_woosh", base.gameObject);
+			//Util.PlaySound("Play_magmaWorm_spawn_VO", base.gameObject);
 			bool active = NetworkServer.active;
 			if (active)
 			{
@@ -130,7 +130,7 @@ namespace DireseekerMod.States
 							bool flag3 = this.predictor != null;
 							if (flag3)
 							{
-								this.predictionOk = this.predictor.GetPredictedTargetPosition(FlamePillar.entryDuration - FlamePillar.trackingDuration, out this.predictedTargetPosition);
+								this.predictionOk = this.predictor.GetPredictedTargetPosition(pillarDelay, out this.predictedTargetPosition);
 							}
 						}
 						else
@@ -164,16 +164,15 @@ namespace DireseekerMod.States
 						{
 							this.subState = FlamePillar.SubState.Exit;
 							this.stopwatch = 0f;
-							base.PlayCrossfade("Gesture, Override", "ExitFlamebreath", "ExitFlamebreath.playbackRate", FlamePillar.fireDuration, 0.1f);
 						}
 						break;
 					}
 				case FlamePillar.SubState.Exit:
 					{
-						bool flag8 = this.stopwatch >= FlamePillar.exitDuration && base.isAuthority;
-						if (flag8)
+						if (this.stopwatch >= FlamePillar.exitDuration)
 						{
-							this.outer.SetNextStateToMain();
+                            base.PlayCrossfade("Gesture, Override", "ExitFlamebreath", "ExitFlamebreath.playbackRate", FlamePillar.fireDuration, 0.1f);
+                            if (base.isAuthority) this.outer.SetNextStateToMain();
 						}
 						break;
 					}
@@ -211,15 +210,15 @@ namespace DireseekerMod.States
 		}
 
 		public static float entryDuration = 1.5f;
-		public static float fireDuration = 0.5f;
-		public static float exitDuration = 0.5f;
+		public static float fireDuration = 0.1f;
+		public static float exitDuration = 0.15f;
 		public static float maxDistance = 128f;
 		public static float trackingDuration = 0.85f;
-		public static float pillarDamageCoefficient = 6f;
-		public static float pillarForce = 2000f;
-		public static float pillarVerticalForce = 4000f;
-		public static float pillarRadius = 6f;
-		public static float pillarDelay = 2f;
+        public static float pillarDamageCoefficient = 6f;
+		public static float pillarForce = 1000f;
+		public static float pillarVerticalForce = 500f;
+		public static float pillarRadius = 5f;
+		public static float pillarDelay = 1.3f;
 
 		private bool hasShownPrediction;
 		private bool predictionOk;

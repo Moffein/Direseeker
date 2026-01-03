@@ -1,8 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using BepInEx;
+﻿using BepInEx;
 using DireseekerMod.Modules;
 using R2API.Utils;
+using System.Security;
+using System.Security.Permissions;
+
+[module: UnverifiableCode]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 
 namespace Direseeker
 {
@@ -11,7 +14,7 @@ namespace Direseeker
     [BepInDependency(R2API.ContentManagement.R2APIContentManager.PluginGUID)]
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-	[BepInPlugin("com.rob.Direseeker", "Direseeker", "1.5.1")]
+	[BepInPlugin("com.rob.Direseeker", "Direseeker", "2.0.609")]
 	public class DireseekerPlugin : BaseUnityPlugin
 	{
 		public static bool AccurateEnemiesLoaded = false;

@@ -1,3 +1,11 @@
+`2.0.0`
+- Added custom SFX to everything
+- Added roar VFX
+- Flamebreath radius increased
+- Enrage now activates at 40% health
+- Enrage function reworked: now grants way more CDR, a permanent massive armor buff, health slowly decays until death, all entities around it are constantly burned and it emits constant magma balls until death
+- Flame Pillar area indicator updated
+
 `1.5.1`
 
 - Ungrabbable bodyflag.

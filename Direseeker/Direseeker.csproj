@@ -13,14 +13,16 @@
   <ItemGroup>
     <None Remove="DiggerBank.bnk" />
     <None Remove="direseeker" />
-    <None Remove="DireseekerBank.bnk" />
+    <None Remove="direseeker2" />
     <None Remove="DireseekerMod.direseeker" />
     <None Remove="DireseekerMod.DireseekerBank.bnk" />
+    <None Remove="direseeker_bank2.bnk" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="direseeker" />
-    <EmbeddedResource Include="DireseekerBank.bnk" />
+    <EmbeddedResource Include="direseeker2" />
+    <EmbeddedResource Include="direseeker_bank2.bnk" />
   </ItemGroup>
 
   <ItemGroup>
@@ -369,6 +371,6 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="rem call &quot;$(ProjectDir)postbuild.bat&quot;&#xD;&#xA;Xcopy /E /I /Y &quot;$(ProjectDir)..\language&quot; &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\language&quot;&#xD;&#xA;&#xD;&#xA;REM add your pc username and path to install location. If not, the rest will just not run.&#xD;&#xA;if &quot;$(Username)&quot; == &quot;Erikbir&quot; set buildpath=&quot;E:\r2Profiles\Blinx Returns\BepInEx\plugins\EnforcerGang-Direseeker\&quot;&#xD;&#xA;&#xD;&#xA;if defined buildpath (&#xD;&#xA;&#xD;&#xA;copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\&quot;&#xD;&#xA;copy &quot;$(TargetDir)\Direseeker.pdb&quot; &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\&quot;&#xD;&#xA;Xcopy /E /I /Y &quot;$(ProjectDir)..\Release\plugins&quot; %25buildpath%25&#xD;&#xA;del &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\Direseeker.pdb&quot;&#xD;&#xA;&#xD;&#xA;)&#xD;&#xA;" />
+    <Exec Command="call &quot;$(ProjectDir)postbuild.bat&quot;&#xD;&#xA;Xcopy /E /I /Y &quot;$(ProjectDir)..\language&quot; &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\language&quot;&#xD;&#xA;&#xD;&#xA;REM add your pc username and path to install location. If not, the rest will just not run.&#xD;&#xA;if &quot;$(Username)&quot; == &quot;Erikbir&quot; set buildpath=&quot;E:\r2Profiles\Blinx Returns\BepInEx\plugins\EnforcerGang-Direseeker\&quot;&#xD;&#xA;&#xD;&#xA;if defined buildpath (&#xD;&#xA;&#xD;&#xA;copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\&quot;&#xD;&#xA;copy &quot;$(TargetDir)\Direseeker.pdb&quot; &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\&quot;&#xD;&#xA;Xcopy /E /I /Y &quot;$(ProjectDir)..\Release\plugins&quot; %25buildpath%25&#xD;&#xA;del &quot;$(ProjectDir)..\Release\plugins\EnforcerGang-Direseeker\Direseeker.pdb&quot;&#xD;&#xA;&#xD;&#xA;)&#xD;&#xA;" />
   </Target>
 </Project>

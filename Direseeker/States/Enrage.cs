@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using DireseekerMod.Components;
+﻿using DireseekerMod.Components;
+using DireseekerMod.Modules;
 using EntityStates;
 using RoR2;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
@@ -19,33 +20,27 @@ namespace DireseekerMod.States
 			this.entryDuration = Enrage.baseEntryDuration / this.attackSpeedStat;
 			this.exitDuration = Enrage.baseExitDuration / this.attackSpeedStat;
 			this.childLocator = base.GetModelChildLocator();
-			this.direController = base.GetComponent<DireseekerController>();
-			bool flag = this.direController;
-			if (flag)
-			{
-				this.direController.StartRageMode();
-			}
-			bool active = NetworkServer.active;
-			if (active)
-			{
-				base.characterBody.AddBuff(RoR2Content.Buffs.ArmorBoost);
-			}
+			this.direController = this.GetComponent<DireseekerController>();
+
+			if (this.direController) this.direController.StartRageMode();
+
+			if (NetworkServer.active) base.characterBody.AddBuff(RoR2Content.Buffs.ArmorBoost);
+
 			base.PlayAnimation("Gesture, Override", "PrepFlamebreath", "PrepFlamebreath.playbackRate", this.entryDuration);
-			Util.PlaySound("Play_magmaWorm_spawn_VO", base.gameObject);
-		}
+            //Util.PlaySound("Play_magmaWorm_spawn_VO", base.gameObject);
+            Util.PlaySound("sfx_direseeker_woosh", base.gameObject);
+        }
 
 		private void GrantItems()
 		{
-			bool active = NetworkServer.active;
-			if (active)
+			if (NetworkServer.active)
 			{
-				bool flag = base.characterBody.master && base.characterBody.master.inventory;
-				if (flag)
+				if (base.characterBody.master && base.characterBody.master.inventory)
 				{
 					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.AdaptiveArmor, 1);
-					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.AlienHead, 2);
-					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.Hoof, 5);
-					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.Syringe, 5);
+					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.AlienHead, 10);
+					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.Hoof, 3);
+					base.characterBody.master.inventory.GiveItem(RoR2Content.Items.Syringe, 3);
 				}
 			}
 		}
@@ -56,33 +51,69 @@ namespace DireseekerMod.States
 			base.OnExit();
 		}
 
+		private void SpawnSun()
+		{
+			if (!NetworkServer.active) return;
+
+            GameObject sun = UnityEngine.Object.Instantiate<GameObject>(Modules.Assets.sunPrefab);
+            sun.GetComponent<GenericOwnership>().ownerObject = base.gameObject;
+            NetworkServer.Spawn(sun);
+            sun.GetComponent<DireseekerSunNetworkController>().RpcPosition(base.gameObject);
+        }
+
 		public override void FixedUpdate()
 		{
 			base.FixedUpdate();
-
 			this.stopwatch += GetDeltaTime();
-			bool flag = this.stopwatch >= this.entryDuration && !this.hasEnraged;
-			if (flag)
+
+			if (this.stopwatch >= this.entryDuration && !this.hasEnraged)
 			{
 				this.hasEnraged = true;
-				this.GrantItems();
-				///AkSoundEngine.StopPlayingID(this.roarStartPlayID);
-				//Util.PlaySound("DireseekerRage", base.gameObject);
-				//Util.PlaySound("DireseekerRoar", base.gameObject);
-				stoppedSound = true;
+                this.characterBody.baseRegen = -20f;
+                this.GrantItems();
+				this.SpawnSun();
+                ///AkSoundEngine.StopPlayingID(this.roarStartPlayID);
+                //Util.PlaySound("DireseekerRage", base.gameObject);
+                //Util.PlaySound("DireseekerRoar", base.gameObject);
+                Util.PlaySound("sfx_direseeker_roar", base.gameObject);
+
+				GameObject fx = GameObject.Instantiate(Modules.Assets.roarEffect);
+				Transform muzzle = this.FindModelChild("MuzzleMouth");
+				fx.transform.position = muzzle.position;
+				fx.transform.rotation = muzzle.rotation;
+				fx.transform.parent = muzzle;
+				GameObject.Destroy(fx, 30f);
+
+                BlastAttack bbbbbbbbb = new BlastAttack();
+                bbbbbbbbb.attacker = this.gameObject;
+                bbbbbbbbb.inflictor = this.gameObject;
+                bbbbbbbbb.teamIndex = TeamIndex.Neutral;
+                bbbbbbbbb.procCoefficient = 0f;
+                bbbbbbbbb.radius = 120f;
+                bbbbbbbbb.baseForce = 8000;
+                bbbbbbbbb.bonusForce = Vector3.up * 200f;
+                bbbbbbbbb.baseDamage = 0f;
+                bbbbbbbbb.falloffModel = BlastAttack.FalloffModel.Linear;
+                bbbbbbbbb.damageColorIndex = DamageColorIndex.Default;
+                bbbbbbbbb.attackerFiltering = AttackerFiltering.NeverHitSelf;
+                bbbbbbbbb.damageType = DamageType.Stun1s;
+
+                bbbbbbbbb.position = this.transform.position;
+                bbbbbbbbb.Fire();
+
+                stoppedSound = true;
 				Transform modelTransform = base.GetModelTransform();
-				bool flag2 = modelTransform;
-				if (flag2)
+				if (modelTransform)
                 {
                     CharacterModel cm = modelTransform.gameObject.GetComponent<CharacterModel>();
 					if (cm)
                     {
                         if (cm.temporaryOverlays == null) cm.temporaryOverlays = new List<TemporaryOverlayInstance>();
                         TemporaryOverlayInstance temporaryOverlay = TemporaryOverlayManager.AddOverlay(cm.gameObject);
-                        temporaryOverlay.duration = 1f;
+                        temporaryOverlay.duration = 1000f;
                         temporaryOverlay.animateShaderAlpha = true;
-                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-                        temporaryOverlay.destroyComponentOnEnd = true;
+                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 10f, 1f, 10f);
+                        temporaryOverlay.destroyComponentOnEnd = false;
                         temporaryOverlay.originalMaterial = onFireMat;
                         temporaryOverlay.inspectorCharacterModel = cm;
 						temporaryOverlay.Start();
@@ -98,7 +129,7 @@ namespace DireseekerMod.States
 				bool active = NetworkServer.active;
 				if (active)
 				{
-					base.characterBody.RemoveBuff(RoR2Content.Buffs.ArmorBoost);
+					//base.characterBody.RemoveBuff(RoR2Content.Buffs.ArmorBoost);
 				}
 			}
 			bool flag4 = this.stopwatch >= this.entryDuration + this.exitDuration && base.isAuthority;
@@ -115,7 +146,7 @@ namespace DireseekerMod.States
 
         private static Material onFireMat = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/matOnFire.mat").WaitForCompletion();
         public static float baseEntryDuration = 1.5f;
-		public static float baseExitDuration = 3.5f;
+		public static float baseExitDuration = 6f;
 
 		private float stopwatch;
 		private float entryDuration;

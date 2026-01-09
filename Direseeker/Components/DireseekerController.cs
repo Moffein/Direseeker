@@ -51,12 +51,12 @@ namespace DireseekerMod.Components
 		private void ShitMeatball()
 		{
 			Vector3 pos = this.characterBody.corePosition;
-            int ballsCount = Random.Range(1, 5);
+            int ballsCount = Random.Range(4, 8);
 
             for (int i = 0; i < ballsCount; i++)
             {
-                float speed = Random.Range(6f, 24f);
-                Vector3 lookVector = (pos + (Vector3.up * Random.Range(-6f, 2f)) + (7f * Random.insideUnitSphere)) - pos;
+                float speed = Random.Range(2f, 16f);
+                Vector3 lookVector = (pos + (Vector3.up * Random.Range(-8f, 2f)) + (7f * Random.insideUnitSphere)) - pos;
 
                 ProjectileManager.instance.FireProjectile(new FireProjectileInfo
                 {

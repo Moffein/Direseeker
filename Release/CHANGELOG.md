@@ -1,3 +1,7 @@
+`2.0.711`
+- Overheat reworked to only affect monsters, no longer harms players at all
+- Greatly increased the amount of fireball vomit while enraged
+
 `2.0.0`
 - Added custom SFX to everything
 - Added roar VFX

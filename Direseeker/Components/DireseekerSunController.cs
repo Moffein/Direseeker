@@ -31,7 +31,7 @@ public class DireseekerSunController : MonoBehaviour
 
     public GameObject buffApplyEffect;
 
-    public static float sunHeight = 5;//avoids crazy misleading shadows from the body itself
+    public static float sunHeight = 0;//avoids crazy misleading shadows from the body itself
 
     [SerializeField]
     public LoopSoundDef activeLoopDef;
@@ -161,17 +161,17 @@ public class DireseekerSunController : MonoBehaviour
                 //Only perform extra logic IF ALL ARE TRUE:
                 //ownerBody still exists (avoids NRE)
                 //The target is an ally
+                    //BUT target is not self WITH more than 3 stacks of overheat
                 //The target is NOT immune to overheat, OR they are not a player (gets around Grandparent immunity)
                 //Known possible issue (untested): might still affect enemies who have Ben's Raincoat because of this logic
 
                 if (ownerBody)
                 {
-                    //just do same behavior for all
                     // only for allies
                     bool isAlly = body.teamComponent.teamIndex == ownerBody.teamComponent.teamIndex;
-                    bool affectEnemy = isAlly && body.GetBuffCount(RoR2Content.Buffs.Overheat) < 5;
+                    bool affectbody = isAlly && !(body == ownerBody && body.GetBuffCount(RoR2Content.Buffs.Overheat) > 3);
                     bool overrideEnemyImmune = ((body.bodyFlags & CharacterBody.BodyFlags.OverheatImmune) == 0 || body.teamComponent.teamIndex != TeamIndex.Player);
-                    if (affectEnemy && overrideEnemyImmune)
+                    if (affectbody && overrideEnemyImmune)
                     {
 
                         Vector3 corePosition = body.corePosition;

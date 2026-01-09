@@ -126,11 +126,9 @@ namespace DireseekerMod.States
 			{
 				this.heck = true;
 				base.PlayCrossfade("Gesture, Override", "ExitFlamebreath", "ExitFlamebreath.playbackRate", 0.75f * this.exitDuration, 0.1f);
-				bool active = NetworkServer.active;
-				if (active)
-				{
-					//base.characterBody.RemoveBuff(RoR2Content.Buffs.ArmorBoost);
-				}
+				if (NetworkServer.active) base.characterBody.RemoveBuff(RoR2Content.Buffs.ArmorBoost);
+				this.characterBody.baseArmor = -100f;
+				this.characterBody.RecalculateStats();
 			}
 			bool flag4 = this.stopwatch >= this.entryDuration + this.exitDuration && base.isAuthority;
 			if (flag4)

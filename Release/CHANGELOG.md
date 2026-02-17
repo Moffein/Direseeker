@@ -1,3 +1,7 @@
+`2.0.1`
+
+- Added KO TL (Thanks Dice-001!)
+
 `2.0.0`
 - Added custom SFX to everything
 - Added roar VFX

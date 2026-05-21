@@ -5,6 +5,10 @@
 - Changed while enraged to be negative
 - Greatly increased the amount of fireball vomit while enraged
 
+`2.0.1`
+
+- Added KO TL (Thanks Dice-001!)
+
 `2.0.0`
 - Added custom SFX to everything
 - Added roar VFX

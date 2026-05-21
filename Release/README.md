@@ -32,3 +32,4 @@ I recommend just using R2Modman to install the mod.
 - Damglador: Ukrainian translation
 - Адский Шкед, lecarde: Russian translation
 - StyleMyk: French translation
+- Dice-001: Korean translation

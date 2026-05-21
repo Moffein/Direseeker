@@ -128,8 +128,41 @@ namespace DireseekerMod.Modules
             sunPrefab.transform.localScale = Vector3.one * 1f;
             sunPrefab.transform.Find("VfxRoot/LightSpinner/LightSpinner/Point Light").GetComponent<Light>().intensity *= 0.1f;
             sunPrefab.transform.Find("VfxRoot/LightSpinner/LightSpinner/Point Light").GetComponent<Light>().range = 200 * 1f;
-            sunPrefab.transform.Find("VfxRoot/Mesh/SunMesh").transform.localScale = Vector3.one * 1f;
-            sunPrefab.transform.Find("VfxRoot/Mesh/AreaIndicator").transform.localScale = Vector3.one * 180;
+            sunPrefab.transform.Find("VfxRoot/LightSpinner").transform.localPosition += Vector3.up * 5f;
+            sunPrefab.transform.Find("VfxRoot/Mesh").gameObject.SetActive(false);
+            //sunPrefab.transform.Find("VfxRoot/Mesh/SunMesh").transform.localScale = Vector3.one * 1f;
+            //sunPrefab.transform.Find("VfxRoot/Mesh/AreaIndicator").transform.localScale = Vector3.one * 180;
+            var particleRoot = sunPrefab.transform.Find("VfxRoot/Particles");
+
+            foreach (ParticleSystem particles in particleRoot.GetComponentsInChildren<ParticleSystem>(true))
+            {
+
+                Debug.LogWarning(particles);
+                if (particles.name == "Donut")
+                {
+                    continue;
+                }
+                ParticleSystem.MainModule mainModule = particles.main;
+                //mainModule.startSize = new ParticleSystem.MinMaxCurve(mainModule.startSize.constant * widthMultiplierMultiplier);
+                //mainModule.startColor = new ParticleSystem.MinMaxGradient(color.Value);
+                if (mainModule.startColor.gradient != null)
+                {
+                    for (int i = 0; i < mainModule.startColor.gradient.alphaKeys.Length; i++)
+                    {
+                        var key = mainModule.startColor.gradient.alphaKeys[i];
+                        key.alpha *= 0.2f;
+                        mainModule.startColor.gradient.alphaKeys[i] = key;
+                    }
+                }
+                else
+                {
+                    var grad = mainModule.startColor;
+                    var color = grad.color;
+                    color.a *= 0.2f;
+                    grad.color = color;
+                    mainModule.startColor = grad;
+                }
+            }
 
             //Removing some distracting effects that don't work well here (imo).
             UnityEngine.Object.DestroyImmediate(sunPrefab.transform.Find("VfxRoot/Mesh/SunMesh/MoonMesh").gameObject);

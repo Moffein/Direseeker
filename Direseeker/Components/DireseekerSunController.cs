@@ -31,7 +31,7 @@ public class DireseekerSunController : MonoBehaviour
 
     public GameObject buffApplyEffect;
 
-    public static float sunHeight = 5;//avoids crazy misleading shadows from the body itself
+    public static float sunHeight = 0;//avoids crazy misleading shadows from the body itself
 
     [SerializeField]
     public LoopSoundDef activeLoopDef;
@@ -160,17 +160,18 @@ public class DireseekerSunController : MonoBehaviour
                 CharacterBody body = hurtBox.healthComponent.body;
                 //Only perform extra logic IF ALL ARE TRUE:
                 //ownerBody still exists (avoids NRE)
-                //The target is an ally OR The target is an enemy and has less than 3 stacks of overheat (capping enemy overheat at 3)
+                //The target is an ally
+                    //BUT target is not self WITH more than 3 stacks of overheat
                 //The target is NOT immune to overheat, OR they are not a player (gets around Grandparent immunity)
                 //Known possible issue (untested): might still affect enemies who have Ben's Raincoat because of this logic
 
                 if (ownerBody)
                 {
-                    //just do same behavior for all
-                    bool isAlly = false;// (body.teamComponent.teamIndex == ownerBody.teamComponent.teamIndex);
-                    bool affectEnemy = !isAlly && 8f > 0 && body.GetBuffCount(RoR2Content.Buffs.Overheat) < 5;
+                    // only for allies
+                    bool isAlly = body.teamComponent.teamIndex == ownerBody.teamComponent.teamIndex;
+                    bool affectbody = isAlly && !(body == ownerBody && body.GetBuffCount(RoR2Content.Buffs.Overheat) > 3);
                     bool overrideEnemyImmune = ((body.bodyFlags & CharacterBody.BodyFlags.OverheatImmune) == 0 || body.teamComponent.teamIndex != TeamIndex.Player);
-                    if ((isAlly || affectEnemy) && overrideEnemyImmune)
+                    if (affectbody && overrideEnemyImmune)
                     {
 
                         Vector3 corePosition = body.corePosition;
@@ -179,9 +180,9 @@ public class DireseekerSunController : MonoBehaviour
                         {
                             //Grandparent's Overheat debuff duration gets longer the closer you are to it to discourage approaching, but this mechanic seems unneccessary here.
                             float distanceFromSun = Mathf.Max(1f, hitInfo.distance);
-                            body.AddTimedBuff(buffDef, 1f / distanceFromSun);
+                            body.AddTimedBuff(buffDef, 1f / distanceFromSun); // this mechanic was used here in fact
                             //body.AddTimedBuff(buffDef, StaticValues.cruelSunOverheatDuration);
-                            if ((bool)buffApplyEffect)
+                            if (buffApplyEffect)
                             {
                                 EffectData effectData = new EffectData
                                 {

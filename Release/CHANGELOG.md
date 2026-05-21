@@ -1,3 +1,10 @@
+`2.0.711`
+- Overheat reworked to only affect monsters, no longer harms players at all
+  - Overheat has lowered effectiveness on self(direseeker)
+  - Overheat vfx toned down
+- Changed while enraged to be negative
+- Greatly increased the amount of fireball vomit while enraged
+
 `2.0.1`
 
 - Added KO TL (Thanks Dice-001!)
